@@ -113,6 +113,12 @@ describe(@"FISCollections2", ^{
     });
     
     describe(@"containsA", ^{
+        it(@"should return an NSArray, not an NSMutableArray",^{
+            NSArray *result = [collection containA:@[@"earth", @"fire", @"wind", @"water", @"heart"]];
+            expect(result).to.beKindOf([NSArray class]);
+            expect(result).toNot.beKindOf([NSMutableArray class]);
+        });
+        
         it(@"returns all elements that contain the letter 'a'",^{
             NSArray *result = [collection containA:@[@"earth", @"fire", @"wind", @"water", @"heart"]];
             expect(result).to.beSupersetOf(@[@"earth", @"water", @"heart"]);
