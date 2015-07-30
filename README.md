@@ -1,7 +1,4 @@
----
-  tags: arrays, iteration, dictionaries, conditionals, nested data structures
-  languages: objc
----
+
 
 # Collections Practice
 
