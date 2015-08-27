@@ -10,6 +10,7 @@
 #import "FISCollections2.h"
 #define EXP_SHORTHAND
 #import "Expecta.h"
+#import <EXPMatchers+equalInAnyOrder.h>
 #import "KIF.h"
 #import "Swizzlean.h"
 
@@ -161,7 +162,14 @@ describe(@"FISCollections2", ^{
     
     describe(@"organizeSchools", ^{
         it(@"take a dictionary of schools with their respective locations and return a dictionary where the keys are locations and each value is an array of the schools in that location",^{
-            expect([collection organizeSchools:schools]).to.equal(organizedSchools);
+            NSDictionary *listOfSchools = [collection organizeSchools:schools];
+            
+            for (NSString *key in [listOfSchools allKeys]) {
+                NSArray *infoOfSchool = [listOfSchools valueForKey:key];
+                
+                expect(infoOfSchool).to.equalInAnyOrder([organizedSchools valueForKey:key]);
+                expect([[organizedSchools allKeys] containsObject:key]).to.equal(YES);
+            }
         });
     });
 });
