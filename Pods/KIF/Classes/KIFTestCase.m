@@ -14,7 +14,13 @@
 
 #define SIG(class, selector) [class instanceMethodSignatureForSelector:selector]
 
+
 @implementation KIFTestCase
+{
+    NSException *_stoppingException;
+}
+
+NSComparisonResult selectorSort(NSInvocation *invocOne, NSInvocation *invocTwo, void *reverse);
 
 + (id)defaultTestSuite
 {
@@ -48,45 +54,46 @@
 
 #ifndef KIF_SENTEST
 
-- (void)setUp;
-{
-    [self beforeEach];
+NSComparisonResult selectorSort(NSInvocation *invocOne, NSInvocation *invocTwo, void *reverse) {
+    
+    NSString *selectorOne =  NSStringFromSelector([invocOne selector]);
+    NSString *selectorTwo =  NSStringFromSelector([invocTwo selector]);
+    return [selectorOne compare:selectorTwo options:NSCaseInsensitiveSearch];
 }
 
-- (void)tearDown;
++ (NSArray *)testInvocations
 {
-    [self afterEach];
+    NSArray *disorderedInvoc = [super testInvocations];
+    NSArray *newArray = [disorderedInvoc sortedArrayUsingFunction:selectorSort context:NULL];
+    return newArray;
 }
 
 + (void)setUp
 {
-    [[self new] beforeAll];
+    [self performSetupTearDownWithSelector:@selector(beforeAll)];
 }
 
 + (void)tearDown
 {
-    [[self new] afterAll];
+    [self performSetupTearDownWithSelector:@selector(afterAll)];
+}
+
++ (void)performSetupTearDownWithSelector:(SEL)selector
+{
+    KIFTestCase *testCase = [self testCaseWithSelector:selector];
+    if ([testCase respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [testCase performSelector:selector];
+#pragma clang diagnostic pop
+    }
+
+    if (testCase->_stoppingException) {
+        [testCase->_stoppingException raise];
+    }
 }
 
 #else
-
-- (void)setUp;
-{
-    [super setUp];
-
-    if ([self isNotBeforeOrAfter]) {
-        [self beforeEach];
-    }
-}
-
-- (void)tearDown;
-{
-    if ([self isNotBeforeOrAfter]) {
-        [self afterEach];
-    }
-
-    [super tearDown];
-}
 
 + (NSArray *)testInvocations;
 {
@@ -111,18 +118,37 @@
     return testInvocations;
 }
 
+#endif
+
+- (void)setUp;
+{
+    [super setUp];
+    
+    if ([self isNotBeforeOrAfter]) {
+        [self beforeEach];
+    }
+}
+
+- (void)tearDown;
+{
+    if ([self isNotBeforeOrAfter]) {
+        [self afterEach];
+    }
+    
+    [super tearDown];
+}
+
 - (BOOL)isNotBeforeOrAfter;
 {
     SEL selector = self.invocation.selector;
     return selector != @selector(beforeAll) && selector != @selector(afterAll);
 }
 
-#endif
-
 - (void)failWithException:(NSException *)exception stopTest:(BOOL)stop
 {
     if (stop) {
         [self writeScreenshotForException:exception];
+        _stoppingException = exception;
     }
     
     if (stop && self.stopTestsOnFirstBigFailure) {
