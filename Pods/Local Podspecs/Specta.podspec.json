@@ -1,0 +1,31 @@
+{
+  "name": "Specta",
+  "version": "0.2.99",
+  "license": "MIT",
+  "summary": "A light-weight TDD / BDD framework for Objective-C & Cocoa.",
+  "homepage": "http://github.com/specta/specta",
+  "authors": {
+    "Peter Jihoon Kim": "raingrove@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/specta/specta.git",
+    "tag": "v0.2.99"
+  },
+  "description": "Specta is a light-weight testing framework for Objective-C and Cocoa that\nadds RSpec-like DSL to XCTest. It is super quick and easy to set up, and\nbecause it runs on top of XCTest, it has an excellent Xcode integration and\naccurate error site reporting. Use your preferred matcher and mocking\nframework. Expecta and OCMock are recommended.",
+  "source_files": "Specta/Specta/**/*.{h,m}",
+  "frameworks": [
+    "Foundation",
+    "XCTest"
+  ],
+  "requires_arc": true,
+  "osx": {
+    "xcconfig": {
+      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(DEVELOPER_FRAMEWORKS_DIR) \"$(PLATFORM_DIR)/Developer/Library/Frameworks\" \"$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/Library/Frameworks\""
+    }
+  },
+  "ios": {
+    "xcconfig": {
+      "FRAMEWORK_SEARCH_PATHS": "$(inherited) $(DEVELOPER_FRAMEWORKS_DIR) \"$(PLATFORM_DIR)/Developer/Library/Frameworks\" \"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks\""
+    }
+  }
+}

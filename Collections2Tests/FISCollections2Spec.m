@@ -10,6 +10,7 @@
 #import "FISCollections2.h"
 #define EXP_SHORTHAND
 #import "Expecta.h"
+#import <EXPMatchers+equalInAnyOrder.h>
 #import "KIF.h"
 #import "Swizzlean.h"
 
@@ -35,19 +36,19 @@ describe(@"FISCollections2", ^{
                      }
                  ];
         data = @[
-                @{
-                    @"blake": @{
-                            @"awesomeness": @10,
-                            @"height": @74,
-                            @"last_name": @"johnson"
-                            },
-                    @"ashley": @{
-                            @"awesomeness": @9,
-                            @"height": @60,
-                            @"last_name": @"dubs"
-                            }
-                    }
-                ];
+                 @{
+                     @"blake": @{
+                             @"awesomeness": @10,
+                             @"height": @74,
+                             @"last_name": @"johnson"
+                             },
+                     @"ashley": @{
+                             @"awesomeness": @9,
+                             @"height": @60,
+                             @"last_name": @"dubs"
+                             }
+                     }
+                 ];
         mergedData = @[
                        @{
                            @"first_name": @"blake",
@@ -145,7 +146,7 @@ describe(@"FISCollections2", ^{
             expect(result).to.equal(@[@{@"name": @"blake", @"count": @2}, @{@"name": @"ashley", @"count": @1}]);
         });
     });
-        
+    
     describe(@"mergeData", ^{
         it(@"take 2 arrays containing dictionaries, and return an array containing 2 dictionaries of merged data",^{
             NSArray  *result = [collection mergeDataWithKeys:keys AndData:data];
@@ -161,7 +162,14 @@ describe(@"FISCollections2", ^{
     
     describe(@"organizeSchools", ^{
         it(@"take a dictionary of schools with their respective locations and return a dictionary where the keys are locations and each value is an array of the schools in that location",^{
-            expect([collection organizeSchools:schools]).to.equal(organizedSchools);
+            NSDictionary *listOfSchools = [collection organizeSchools:schools];
+            
+            for (NSString *key in [listOfSchools allKeys]) {
+                NSArray *infoOfSchool = [listOfSchools valueForKey:key];
+                
+                expect(infoOfSchool).to.equalInAnyOrder([organizedSchools valueForKey:key]);
+                expect([[organizedSchools allKeys] containsObject:key]).to.equal(YES);
+            }
         });
     });
 });
