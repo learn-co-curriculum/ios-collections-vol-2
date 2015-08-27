@@ -8,7 +8,8 @@ end
 
 target "Collections2Tests" do
   pod 'Specta'
-  pod 'Expecta'                                                 
+  pod 'Expecta'  
+  pod 'Expecta+Collections'                                      
   pod 'KIF'                                                        
   pod 'Swizzlean'
 end
